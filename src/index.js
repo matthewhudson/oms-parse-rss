@@ -3,14 +3,30 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const feedParser = require('feedparser-promised')
 
 app.use(bodyParser.json())
 
 const port = process.env.PORT || 8080
 
-app.post('/message', (req, res) => {
-  const { name } = req.body
-  res.json({ message: `Hello ${name}` })
+app.post('/parse', async (req, res) => {
+  const { url = '' } = req.body
+
+  await feedParser
+    .parse(url)
+    .then(items => {
+      res.json({
+        items: items.map(item => ({
+          date: item.date,
+          title: item.title,
+          link: item.link,
+          description: item.description
+        }))
+      })
+    })
+    .catch(er => {
+      res.status(500).json({ error: er.message || er })
+    })
 })
 
 app.get('/health', (req, res) => res.send('OK'))
