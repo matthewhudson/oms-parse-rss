@@ -6,10 +6,10 @@ services:
   - docker
 
 before_install:
-  - npm i omg
+  - npm i @microservices/oms
 
 script:
   - npx omg build
   - |
-    output="$(npx omg run --raw message -a name="World" | jq -c .)"
-    if [ "$output" != '{"message":"Hello World"}' ] ; then echo "$output"; exit 1; fi
+    output="$(npx oms run --silent parse -a url="https://oms.hudson.dev/fixtures/feed-single-item.rss" | jq -c .)"
+    if [ "$output" != {"items":[{"date":"2019-10-27T22:00:00.000Z","title":"And the Call Was Coming from the Basement","link":"https://www.thisamericanlife.org/319/and-the-call-was-coming-from-the-basement", "description":"For the week leading up to Halloween, scary stories that are all true. Kidnappings, zombie raccoons, haunted houses—real haunted houses!—and things that go \"EEEEK!!!\" in the night. Plus, a story by David Sedaris, in which he walks among the dead."}]}' ] ; then echo "$output"; exit 1; fi
