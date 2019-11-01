@@ -15,14 +15,7 @@ app.post('/parse', async (req, res) => {
   await feedParser
     .parse(url)
     .then(items => {
-      res.json({
-        items: items.map(item => ({
-          date: item.date,
-          title: item.title,
-          link: item.link,
-          description: item.description
-        }))
-      })
+      res.json({ items })
     })
     .catch(er => {
       res.status(500).json({ error: er.message || er })
